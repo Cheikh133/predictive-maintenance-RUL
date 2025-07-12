@@ -10,3 +10,4 @@ __pycache__/
 .vscode/
 models/
 data/processed/
+.ipynb_checkpoints/
