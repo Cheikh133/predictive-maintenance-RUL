@@ -1,3 +1,5 @@
+# requirements.txt
+
 pandas
 numpy
 scikit-learn
@@ -9,3 +11,10 @@ joblib
 lightgbm
 xgboost
 optuna
+
+# testing & linting tools
+pytest
+flake8
+isort
+black
+pre-commit
