@@ -1,6 +1,4 @@
-# src/model_evaluation.py
-
-from typing import Any, Dict, Tuple
+from typing import Any, Tuple  # on retire Dict
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -21,13 +19,10 @@ def compute_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> Tuple[float, floa
 
     Returns
     -------
-    mae : float
-        Mean Absolute Error
-    rmse : float
-        Root Mean Squared Error
+    (mae, rmse) : tuple of floats
     """
     mae = mean_absolute_error(y_true, y_pred)
-    rmse = np.sqrt(mean_squared_error(y_true, y_pred))
+    rmse = mean_squared_error(y_true, y_pred, squared=False)
     return mae, rmse
 
 
@@ -45,34 +40,12 @@ def plot_learning_curve(
     """
     Plot a learning curve for the given estimator using GroupKFold.
 
-    Parameters
-    ----------
-    estimator : estimator object
-        Model implementing 'fit' and 'predict'.
-    X : array-like of shape (n_samples, n_features)
-        Training vector.
-    y : array-like of shape (n_samples,)
-        Target vector.
-    groups : array-like of shape (n_samples,)
-        Group labels for the samples used while splitting the dataset.
-    title : str
-        Title for the chart.
-    cv_splits : int
-        Number of folds for GroupKFold cross-validation.
-    train_sizes : array-like
-        Relative or absolute numbers of training examples that will be used.
-    scoring : str
-        Scoring metric for learning curve.
-    figsize : tuple
-        Figure size.
-
     Returns
     -------
     fig : matplotlib.figure.Figure
-        The plotted figure.
     """
     cv = GroupKFold(n_splits=cv_splits)
-    sizes, train_scores, valid_scores = learning_curve(
+    train_sizes_abs, train_scores, valid_scores = learning_curve(
         estimator,
         X,
         y,
@@ -85,13 +58,13 @@ def plot_learning_curve(
     train_mae = -np.mean(train_scores, axis=1)
     valid_mae = -np.mean(valid_scores, axis=1)
 
-    fig, ax = plt.subplots(figsize=figsize)
-    ax.plot(sizes, train_mae, marker="o", label="Train MAE")
-    ax.plot(sizes, valid_mae, marker="o", label="CV MAE")
-    ax.set_xlabel("Training Set Size")
-    ax.set_ylabel("MAE")
-    ax.set_title(title)
-    ax.legend()
-    ax.grid(True)
-    fig.tight_layout()
+    fig = plt.figure(figsize=figsize)
+    plt.plot(train_sizes_abs, train_mae, marker="o", label="Train MAE")
+    plt.plot(train_sizes_abs, valid_mae, marker="o", label="CV MAE")
+    plt.xlabel("Training Set Size")
+    plt.ylabel("MAE")
+    plt.title(title)
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
     return fig
