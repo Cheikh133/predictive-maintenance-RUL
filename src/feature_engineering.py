@@ -1,7 +1,8 @@
 # src/feature_engineering.py
 
 from pathlib import Path
-from typing import Tuple, List
+from typing import List, Tuple
+
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
@@ -48,14 +49,10 @@ def generate_rolling_features(df: pd.DataFrame, window: int = 5) -> pd.DataFrame
     for col in sensor_cols:
         grp = result.groupby("unit_number")[col]
         result[f"{col}_rolling_mean"] = (
-            grp.rolling(window, min_periods=1)
-            .mean()
-            .reset_index(level=0, drop=True)
+            grp.rolling(window, min_periods=1).mean().reset_index(level=0, drop=True)
         )
         result[f"{col}_rolling_std"] = (
-            grp.rolling(window, min_periods=1)
-            .std()
-            .reset_index(level=0, drop=True)
+            grp.rolling(window, min_periods=1).std().reset_index(level=0, drop=True)
         )
     return result
 
@@ -117,23 +114,19 @@ def generate_delta_features(df: pd.DataFrame) -> pd.DataFrame:
     """
     result = df.copy()
     base_sensors = [
-        c for c in df.columns
+        c
+        for c in df.columns
         if c.startswith("sensor_measurement_")
         and "_rolling" not in c
         and "_delta" not in c
     ]
     for col in base_sensors:
-        result[f"{col}_delta"] = (
-            result.groupby("unit_number")[col]
-            .diff()
-            .fillna(0)
-        )
+        result[f"{col}_delta"] = result.groupby("unit_number")[col].diff().fillna(0)
     return result
 
 
 def drop_constant_features(
-    train_df: pd.DataFrame,
-    test_df: pd.DataFrame
+    train_df: pd.DataFrame, test_df: pd.DataFrame
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Drop features that have zero variance in the test set.
@@ -155,9 +148,7 @@ def drop_constant_features(
 
 
 def scale_features(
-    train_df: pd.DataFrame,
-    test_df: pd.DataFrame,
-    feature_cols: List[str]
+    train_df: pd.DataFrame, test_df: pd.DataFrame, feature_cols: List[str]
 ) -> Tuple[pd.DataFrame, pd.DataFrame, StandardScaler]:
     """
     Standard scale specified feature columns on train and apply to test.
@@ -181,9 +172,7 @@ def scale_features(
 
 
 def drop_correlated_features(
-    train_df: pd.DataFrame,
-    test_df: pd.DataFrame,
-    drop_cols: List[str]
+    train_df: pd.DataFrame, test_df: pd.DataFrame, drop_cols: List[str]
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Drop a pre-specified list of correlated features from both DataFrames.
@@ -203,9 +192,7 @@ def drop_correlated_features(
 
 
 def save_engineered_data(
-    train_df: pd.DataFrame,
-    test_df: pd.DataFrame,
-    out_dir: Path
+    train_df: pd.DataFrame, test_df: pd.DataFrame, out_dir: Path
 ) -> None:
     """
     Save the final engineered train/test sets to CSV.
@@ -223,9 +210,7 @@ def save_engineered_data(
 
 
 def run_feature_engineering(
-    train_df: pd.DataFrame,
-    test_df: pd.DataFrame,
-    out_dir: Path = None
+    train_df: pd.DataFrame, test_df: pd.DataFrame, out_dir: Path = None
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Execute full feature engineering pipeline.
@@ -277,7 +262,8 @@ def run_feature_engineering(
 
     # 5. Scale
     feat_cols = [
-        c for c in train_feat.columns
+        c
+        for c in train_feat.columns
         if c not in ["unit_number", "time_in_cycles", "RUL"]
     ]
     train_feat, test_feat, _ = scale_features(train_feat, test_feat, feat_cols)

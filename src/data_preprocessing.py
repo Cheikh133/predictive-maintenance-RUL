@@ -1,8 +1,8 @@
 # src/data_preprocessing.py
 
 from pathlib import Path
-import pandas as pd
 
+import pandas as pd
 
 # Project directory constants
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,7 +10,9 @@ RAW_DIR = BASE_DIR / "data" / "raw"
 PROCESSED_DIR = BASE_DIR / "data" / "processed"
 
 
-def load_raw_data(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def load_raw_data(
+    raw_dir: Path = RAW_DIR,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Load raw training, test and RUL datasets from FD001 files.
 
@@ -53,8 +55,11 @@ def assign_column_names(df: pd.DataFrame) -> pd.DataFrame:
         With columns: unit_number, time_in_cycles, operational_settings, sensors...
     """
     base_cols = [
-        "unit_number", "time_in_cycles",
-        "operational_setting_1", "operational_setting_2", "operational_setting_3",
+        "unit_number",
+        "time_in_cycles",
+        "operational_setting_1",
+        "operational_setting_2",
+        "operational_setting_3",
     ]
     sensor_cols = [f"sensor_measurement_{i}" for i in range(1, 22)]
     df.columns = base_cols + sensor_cols
@@ -124,18 +129,14 @@ def compute_train_rul(df: pd.DataFrame) -> pd.DataFrame:
         With new 'RUL' column.
     """
     max_cycle = (
-        df.groupby("unit_number")["time_in_cycles"]
-        .max()
-        .reset_index(name="max_cycle")
+        df.groupby("unit_number")["time_in_cycles"].max().reset_index(name="max_cycle")
     )
     df = df.merge(max_cycle, on="unit_number", how="left")
     df["RUL"] = df["max_cycle"] - df["time_in_cycles"]
     return df.drop(columns=["max_cycle"])
 
 
-def compute_test_true_rul(
-    test_df: pd.DataFrame, rul_df: pd.DataFrame
-) -> pd.DataFrame:
+def compute_test_true_rul(test_df: pd.DataFrame, rul_df: pd.DataFrame) -> pd.DataFrame:
     """
     Build final test set: select last cycle per unit and attach true_RUL.
 

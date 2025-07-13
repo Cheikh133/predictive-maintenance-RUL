@@ -1,16 +1,16 @@
 import os
 import tempfile
 
-import pytest
-import pandas as pd
 import numpy as np
+import pandas as pd
+import pytest
 from joblib import load
 
 from src import (
     data_preprocessing,
     feature_engineering,
-    model_training,
     model_evaluation,
+    model_training,
     model_utils,
 )
 
@@ -80,6 +80,7 @@ def test_train_lightgbm_returns_fitted_model():
         X, y, groups, random_state=0, n_trials=2, n_estimators=10
     )
     from lightgbm import LGBMRegressor
+
     assert isinstance(model, LGBMRegressor)
     # The model should have the n_estimators attribute set
     assert hasattr(model, "n_estimators")
@@ -98,6 +99,7 @@ def test_compute_metrics_and_plot(tmp_path):
     assert pytest.approx(rmse, rel=1e-3) == np.sqrt(np.mean((y_true - y_pred) ** 2))
     # Generate a learning curve plot
     import matplotlib.pyplot as plt
+
     dummy_estimator = model_training.train_lightgbm(
         pd.DataFrame(np.random.rand(20, 5)),
         np.random.rand(20),

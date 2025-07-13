@@ -1,36 +1,36 @@
 from pathlib import Path
-from typing import Tuple, Dict, Any
-import numpy as np
-import pandas as pd
-import optuna
+from typing import Any, Dict, Tuple
+
 import lightgbm as lgb
+import numpy as np
+import optuna
+import pandas as pd
+from joblib import dump
 from lightgbm import LGBMRegressor
 from scipy.stats import randint
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import make_scorer, mean_absolute_error, mean_squared_error
 from sklearn.model_selection import GroupKFold, RandomizedSearchCV, cross_val_score
-from sklearn.metrics import mean_absolute_error, mean_squared_error, make_scorer
-from joblib import dump
 
 
 def load_feature_data(
-    data_dir: Path
+    data_dir: Path,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
     """
     Load train_features.csv and test_features.csv into X/y sets.
     """
     train = pd.read_csv(data_dir / "train_features.csv")
     test = pd.read_csv(data_dir / "test_features.csv")
-    feats = [c for c in train.columns if c not in ["unit_number", "time_in_cycles", "RUL"]]
+    feats = [
+        c for c in train.columns if c not in ["unit_number", "time_in_cycles", "RUL"]
+    ]
     X_train, y_train = train[feats], train["RUL"]
     X_test, y_test = test[feats], test["true_RUL"]
     return X_train, X_test, y_train, y_test
 
 
 def evaluate_baselines(
-    X: pd.DataFrame,
-    y: pd.Series,
-    groups: pd.Series,
-    random_state: int = 42
+    X: pd.DataFrame, y: pd.Series, groups: pd.Series, random_state: int = 42
 ) -> pd.DataFrame:
     """
     Cross-validate simple linear and tree ensemble baselines.
@@ -42,7 +42,7 @@ def evaluate_baselines(
     )
     results = []
     # Linear models
-    from sklearn.linear_model import LinearRegression, Ridge, Lasso
+    from sklearn.linear_model import Lasso, LinearRegression, Ridge
 
     for name, model in [
         ("LinearRegression", LinearRegression()),
@@ -50,24 +50,28 @@ def evaluate_baselines(
         ("Lasso", Lasso(alpha=0.1, random_state=random_state)),
     ]:
         mae = -cross_val_score(model, X, y, scoring=mae_s, cv=cv, groups=groups).mean()
-        rmse = -cross_val_score(model, X, y, scoring=rmse_s, cv=cv, groups=groups).mean()
+        rmse = -cross_val_score(
+            model, X, y, scoring=rmse_s, cv=cv, groups=groups
+        ).mean()
         results.append({"model": name, "MAE": mae, "RMSE": rmse})
     # Ensembles
     for name, model in [
-        ("RandomForest", RandomForestRegressor(n_estimators=100, random_state=random_state)),
+        (
+            "RandomForest",
+            RandomForestRegressor(n_estimators=100, random_state=random_state),
+        ),
         ("LightGBM", LGBMRegressor(random_state=random_state)),
     ]:
         mae = -cross_val_score(model, X, y, scoring=mae_s, cv=cv, groups=groups).mean()
-        rmse = -cross_val_score(model, X, y, scoring=rmse_s, cv=cv, groups=groups).mean()
+        rmse = -cross_val_score(
+            model, X, y, scoring=rmse_s, cv=cv, groups=groups
+        ).mean()
         results.append({"model": name, "MAE": mae, "RMSE": rmse})
     return pd.DataFrame(results)
 
 
 def tune_random_forest(
-    X: pd.DataFrame,
-    y: pd.Series,
-    groups: pd.Series,
-    random_state: int = 42
+    X: pd.DataFrame, y: pd.Series, groups: pd.Series, random_state: int = 42
 ) -> Dict[str, Any]:
     """
     RandomizedSearchCV for RandomForest hyperparameters.
@@ -82,8 +86,15 @@ def tune_random_forest(
         "min_samples_leaf": randint(1, 5),
     }
     rs = RandomizedSearchCV(
-        rf, dist, n_iter=20, scoring=mae_s, cv=cv,
-        groups=groups, random_state=random_state, n_jobs=-1, refit=True
+        rf,
+        dist,
+        n_iter=20,
+        scoring=mae_s,
+        cv=cv,
+        groups=groups,
+        random_state=random_state,
+        n_jobs=-1,
+        refit=True,
     )
     rs.fit(X, y)
     return rs.best_params_
