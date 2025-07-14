@@ -12,58 +12,53 @@ This repository implements a complete pipeline for Remaining Useful Life (RUL) p
   - **Output** → `data/processed/train_processed.csv`, `data/processed/test_processed.csv`
 
 - **Feature engineering** (`src/feature_engineering.py`, inspired by `notebooks/02_Feature_Engineering.ipynb`)
-  - **Rolling‐window stats** (mean, std over 5 cycles) to capture short‐term trends and variability
-  - **Delta features** (difference from previous cycle) to encode cycle‐to‐cycle changes
-  - **Cycle ratio** (current cycle / max cycle) to normalize the engine’s life stage
-  - **Drop zero‐variance** features (constant signals) and **drop highly correlated** sensors to reduce redundancy
-  - **Standard scaling** (zero mean, unit variance) for all features
-  - **Save** engineered datasets
+  - Rolling-window stats (mean, std over 5 cycles) to capture short-term trends and variability
+  - Delta features (difference from previous cycle) to encode cycle-to-cycle changes
+  - Cycle ratio (current cycle / max cycle) to normalize the engine’s life stage
+  - Drop zero-variance features (constant signals) and drop highly correlated sensors to reduce redundancy
+  - Standard scaling (zero mean, unit variance) for all features
+  - Save engineered datasets
   - **Input** → `data/processed/train_processed.csv`, `data/processed/test_processed.csv`
   - **Output** → `data/processed/train_features.csv`, `data/processed/test_features.csv`
 
-
 - **Model training** (`src/model_training.py`, inspired by `notebooks/03_Modeling.ipynb`)
-  Compare baselines (LinearRegression, Ridge, Lasso, RandomForest, LightGBM), tune RandomForest hyperparameters with `RandomizedSearchCV`, tune LightGBM with Optuna, train the final LightGBM model, and serialize it.
+  Compare baselines (Linear Regression, Ridge, Lasso, Random Forest, LightGBM), tune Random Forest hyperparameters with `RandomizedSearchCV`, tune LightGBM with Optuna, train the final LightGBM model, and serialize it.
   - **Input** → `data/processed/train_features.csv`, `data/processed/test_features.csv`
   - **Output** → `models/final_lgb.joblib`
 
+- **Model evaluation** (`src/model_evaluation.py`)
+  - `compute_metrics(y_true, y_pred)` : returns MAE and RMSE
+  - `plot_learning_curve(estimator, X, y, groups, …)` : returns a `matplotlib.figure.Figure` showing train vs CV MAE as training set size grows
 
-**Model evaluation** (`src/model_evaluation.py`)
-- `compute_metrics(y_true, y_pred)` : returns MAE and RMSE
-- `plot_learning_curve(estimator, X, y, groups, …)` : generates a Matplotlib Figure showing train vs CV MAE as training set size grows
-
-- **Streamlit dashboard** (`dashboard/app.py`)
+- **Streamlit Dashboard** (`dashboard/app.py`)
   Interactive app to explore sensor signals, RUL predictions, and performance visualizations.
 
 - **CI/CD** (GitHub Actions)
-  - **Install dependencies** via `pip install -r requirements.txt`
-  - **Run linters** to enforce code quality and consistency:
+  - Install dependencies via `pip install -r requirements.txt`
+  - Run linters to enforce code quality and consistency:
     - **Black** – opinionated code formatter that automatically reformats Python source to a canonical style.
     - **isort** – sorts and groups `import` statements according to configurable rules, keeping them tidy.
     - **Flake8** – static code analysis to catch bugs, style violations (PEP8), unused variables/imports, etc.
-  - **Execute unit tests** with `pytest` to ensure each component behaves as expected
+  - Execute unit tests with `pytest` to ensure each component behaves as expected
 
 ## Data Description: CMAPSS FD001
 
 The FD001 subset of the NASA CMAPSS dataset contains run-to-failure trajectories for turbofan engines under a single operating condition (sea level) and a single fault mode (HPC degradation).
 
 - **Training set**
-  - **Trajectories**: 100 engines
-  - **Cycles per trajectory**: variable, until failure
+  - Trajectories: 100 engines
+  - Cycles per trajectory: variable, until failure
 - **Test set**
-  - **Trajectories**: 100 engines
-  - **Cycles per trajectory**: ends before failure
-  - **True RUL** provided in `RUL_FD001.txt`
+  - Trajectories: 100 engines
+  - Cycles per trajectory: ends before failure
+  - True RUL provided in `RUL_FD001.txt`
 
-| Column                  | Description                                                        |
-|-------------------------|--------------------------------------------------------------------|
-| `unit_number`           | Engine (unit) identifier                                           |
-| `time_in_cycles`        | Elapsed cycles since start of run                                  |
-| `operational_setting_1` | Ambient temperature                                                |
-| `operational_setting_2` | Ambient pressure                                                   |
-| `operational_setting_3` | Sea-level throttle setting (constant in FD001)                     |
+| Column                                     | Description                                                        |
+|--------------------------------------------|--------------------------------------------------------------------|
+| `unit_number`                              | Engine (unit) identifier                                           |
+| `time_in_cycles`                           | Elapsed cycles since start of run                                  |
+| `operational_setting_1`–`operational_setting_3` | Three operational parameters affecting engine performance     |
 | `sensor_measurement_1`–`sensor_measurement_21` | 21 distinct sensor readings (temperatures, pressures, speeds, vibrations, flow rates, etc.) |
-
 
 **File formats**
 - `train_FD001.txt` / `test_FD001.txt`: space-delimited, no header
@@ -75,22 +70,15 @@ The FD001 subset of the NASA CMAPSS dataset contains run-to-failure trajectories
 
 ## Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Cheikh133/predictive-maintenance-RUL.git
-   cd predictive-maintenance-RUL
-   ```
-2. **Create and activate a virtual environment**
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate    # macOS / Linux
-   .venv\Scripts\activate       # Windows
-   ```
-3. **Install runtime dependencies**
-   ```bash
-   pip install --upgrade pip
-   pip install -r requirements.txt
-   ```
+```bash
+git clone https://github.com/Cheikh133/predictive-maintenance-RUL.git
+cd predictive-maintenance-RUL
+python3 -m venv .venv
+source .venv/bin/activate       # macOS / Linux
+.venv\Scripts\activate          # Windows
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
 ## Development
 
@@ -123,3 +111,41 @@ flake8 .
 # 6. Run tests
 pytest -q --disable-warnings --maxfail=1
 ```
+
+## Project Structure
+
+predictive-maintenance-RUL/
+├── .github/                     # CI workflow definitions
+├── data/
+│   ├── raw/                     # Original data files
+│   └── processed/               # Cleaned and feature CSVs
+├── notebooks/                   # EDA, feature engineering, modeling
+├── src/                         # Production code
+│   ├── data_preprocessing.py
+│   ├── feature_engineering.py
+│   ├── model_training.py
+│   ├── model_evaluation.py
+│   └── model_utils.py
+├── models/                      # Saved model artifacts
+├── dashboard/                   # Streamlit application
+├── tests/                       # Unit tests
+├── requirements.txt             # Python dependencies
+└── README.md
+
+## Simplified Pipeline
+
+Raw TXT files
+      ↓
+data_preprocessing.py
+      ↓
+train_processed.csv, test_processed.csv
+      ↓
+feature_engineering.py
+      ↓
+train_features.csv, test_features.csv
+      ↓
+model_training.py / model_evaluation.py
+      ↓
+final_lgb.joblib + performance metrics
+      ↓
+dashboard/app.py
