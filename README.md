@@ -115,37 +115,34 @@ pytest -q --disable-warnings --maxfail=1
 ## Project Structure
 
 predictive-maintenance-RUL/
-├── .github/                     # CI workflow definitions
+├── .github/                   # GitHub Actions workflows
 ├── data/
-│   ├── raw/                     # Original data files
-│   └── processed/               # Cleaned and feature CSVs
-├── notebooks/                   # EDA, feature engineering, modeling
-├── src/                         # Production code
-│   ├── data_preprocessing.py
-│   ├── feature_engineering.py
-│   ├── model_training.py
-│   ├── model_evaluation.py
-│   └── model_utils.py
-├── models/                      # Saved model artifacts
-├── dashboard/                   # Streamlit application
-├── tests/                       # Unit tests
-├── requirements.txt             # Python dependencies
-└── README.md
+│   ├── raw/                   # Original TXT data files
+│   └── processed/             # Cleaned & feature‐engineered CSVs
+├── notebooks/                 # Exploratory & prototyping notebooks
+├── src/                       # Production modules
+│   ├── data_preprocessing.py  # Load & clean raw data, compute RUL
+│   ├── feature_engineering.py # Generate rolling, delta, cycle_ratio, scale
+│   ├── model_training.py      # Baselines, hyperparameter tuning, final model
+│   ├── model_evaluation.py    # MAE/RMSE computation & learning‐curve plotting
+│   └── model_utils.py         # Path helpers & model save/load
+├── models/                    # Serialized model artifacts
+├── dashboard/                 # Streamlit application for visualization
+├── tests/                     # Pytest unit tests
+├── requirements.txt           # Project dependencies
+└── README.md                  # Project overview & instructions
 
-## Simplified Pipeline
+## Simplified Data → Model → Dashboard Pipeline
 
-Raw TXT files
-      ↓
-data_preprocessing.py
-      ↓
-train_processed.csv, test_processed.csv
-      ↓
-feature_engineering.py
-      ↓
-train_features.csv, test_features.csv
-      ↓
-model_training.py / model_evaluation.py
-      ↓
-final_lgb.joblib + performance metrics
-      ↓
-dashboard/app.py
+data/raw/*.txt
+      ↓  # data_preprocessing.py
+data/processed/train_processed.csv
+data/processed/test_processed.csv
+      ↓  # feature_engineering.py
+data/processed/train_features.csv
+data/processed/test_features.csv
+      ↓  # model_training.py & model_evaluation.py
+models/final_lgb.joblib
+performance metrics (MAE, RMSE, learning curves)
+      ↓  # dashboard/app.py
+Streamlit dashboard
