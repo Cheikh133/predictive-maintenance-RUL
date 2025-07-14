@@ -114,35 +114,35 @@ pytest -q --disable-warnings --maxfail=1
 
 ## Project Structure
 
-predictive-maintenance-RUL/
-├── .github/                   # GitHub Actions workflows
-├── data/
-│   ├── raw/                   # Original TXT data files
-│   └── processed/             # Cleaned & feature‐engineered CSVs
-├── notebooks/                 # Exploratory & prototyping notebooks
-├── src/                       # Production modules
-│   ├── data_preprocessing.py  # Load & clean raw data, compute RUL
-│   ├── feature_engineering.py # Generate rolling, delta, cycle_ratio, scale
-│   ├── model_training.py      # Baselines, hyperparameter tuning, final model
-│   ├── model_evaluation.py    # MAE/RMSE computation & learning‐curve plotting
-│   └── model_utils.py         # Path helpers & model save/load
-├── models/                    # Serialized model artifacts
-├── dashboard/                 # Streamlit application for visualization
-├── tests/                     # Pytest unit tests
-├── requirements.txt           # Project dependencies
-└── README.md                  # Project overview & instructions
+predictive-maintenance-RUL/  
+├── .github/                   # GitHub Actions workflows  
+├── data/  
+│   ├── raw/                   # Original TXT data files  
+│   └── processed/             # Cleaned & feature‐engineered CSVs  
+├── notebooks/                 # Exploratory & prototyping notebooks  
+├── src/                       # Production modules  
+│   ├── data_preprocessing.py  # Load & clean raw data, compute RUL  
+│   ├── feature_engineering.py # Generate rolling, delta, cycle_ratio, scale  
+│   ├── model_training.py      # Baselines, hyperparameter tuning, final model  
+│   ├── model_evaluation.py    # MAE/RMSE computation & learning‐curve plotting  
+│   └── model_utils.py         # Path helpers & model save/load  
+├── models/                    # Serialized model artifacts  
+├── dashboard/                 # Streamlit application for visualization  
+├── tests/                     # Pytest unit tests  
+├── requirements.txt           # Project dependencies  
+└── README.md                  # Project overview & instructions  
 
 ## Simplified Data → Model → Dashboard Pipeline
 
-data/raw/*.txt
-      ↓  # data_preprocessing.py
-data/processed/train_processed.csv
-data/processed/test_processed.csv
-      ↓  # feature_engineering.py
-data/processed/train_features.csv
-data/processed/test_features.csv
-      ↓  # model_training.py & model_evaluation.py
-models/final_lgb.joblib
-performance metrics (MAE, RMSE, learning curves)
-      ↓  # dashboard/app.py
-Streamlit dashboard
+data/raw/*.txt  
+      ↓  # data_preprocessing.py  
+data/processed/train_processed.csv  
+data/processed/test_processed.csv  
+      ↓  # feature_engineering.py  
+data/processed/train_features.csv  
+data/processed/test_features.csv  
+      ↓  # model_training.py & model_evaluation.py  
+models/final_lgb.joblib  
+performance metrics (MAE, RMSE, learning curves)  
+      ↓  # dashboard/app.py  
+Streamlit dashboard  
