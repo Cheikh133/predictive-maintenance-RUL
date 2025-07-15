@@ -2,6 +2,9 @@
 
 [![CI](https://github.com/Cheikh133/predictive-maintenance-RUL/actions/workflows/ci.yml/badge.svg)](https://github.com/Cheikh133/predictive-maintenance-RUL/actions/workflows/ci.yml)
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-blue?style=flat-square&logo=streamlit&logoColor=white&label=Live%20Demo&labelColor=555555&color=007ACC&cacheSeconds=3600)](https://predictive-maintenance-rul-wth7dklhnwcvyzgzoyp2ry.streamlit.app/)
+
+
 ## Project Description
 
 This repository implements a complete pipeline for Remaining Useful Life (RUL) prediction on turbofan engine data (NASA CMAPSS FD001). It includes:
