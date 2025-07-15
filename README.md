@@ -6,11 +6,21 @@
 
 ## Table of Contents
 
-1. [Pipeline Overview](#pipeline-overview)  
-2. [Dataset: NASA CMAPSS FD001](#dataset-nasa-cmapss-fd001)  
-3. [Installation](#installation)  
-4. [Development](#development)   
+1. [Key Technologies](#key-technologies)
+2. [Pipeline Overview](#pipeline-overview)  
+3. [Dataset: NASA CMAPSS FD001](#dataset-nasa-cmapss-fd001)  
+4. [Installation](#installation)  
+5. [Development](#development)  
 6. [Author](#author)  
+
+## Key Technologies
+
+- **Python 3.11**  
+- **LightGBM** (gradient boosting)  
+- **Optuna** (hyperparameter tuning)  
+- **Scikit‑learn** (preprocessing, metrics)  
+- **Streamlit** (dashboard)  
+- **GitHub Actions** (CI/CD)  
 
 
 ## Pipeline Overview
@@ -38,12 +48,12 @@ The FD001 subset of the NASA CMAPSS dataset contains run-to-failure trajectories
   - Cycles per trajectory: ends before failure
   - True RUL provided in `RUL_FD001.txt`
 
-| Column                                     | Description                                                        |
-|--------------------------------------------|--------------------------------------------------------------------|
-| `unit_number`                              | Engine (unit) identifier                                           |
-| `time_in_cycles`                           | Elapsed cycles since start of run                                  |
-| `operational_setting_1`–`operational_setting_3` | Three operational parameters affecting engine performance     |
-| `sensor_measurement_1`–`sensor_measurement_21` | 21 distinct sensor readings (temperatures, pressures, speeds, vibrations, flow rates, etc.) |
+| Column                       | Description                                                |
+|:-----------------------------|:-----------------------------------------------------------|
+| `unit_number`                | Engine identifier                                          |
+| `time_in_cycles`             | Cycle index                                                |
+| `operational_setting_1–3`    | Three engine operating parameters (e.g. temp, pressure)   |
+| `sensor_measurement_1–21`    | 21 multivariate sensor readings (temp, pressure, vibration, flow) |
 
 **File formats**
 - `train_FD001.txt` / `test_FD001.txt`: space-delimited, no header
