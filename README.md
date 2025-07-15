@@ -1,6 +1,6 @@
 # predictive-maintenance-RUL
 
-[![CI](https://github.com/Cheikh133/predictive-maintenance-RUL/actions/workflows/ci.yml/badge.svg)](https://github.com/Cheikh133/predictive-maintenance-RUL/actions)
+[![CI](https://github.com/Cheikh133/predictive-maintenance-RUL/actions/workflows/ci.yml/badge.svg)](https://github.com/Cheikh133/predictive-maintenance-RUL/actions/workflows/ci.yml)
 
 ## Project Description
 
