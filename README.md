@@ -20,11 +20,11 @@ Below is a concise view of the end‑to‑end flow, from raw data ingestion to i
 
 | Stage             | Script                            | Inputs                            | Outputs                             |
 |-------------------|-----------------------------------|-----------------------------------|-------------------------------------|
-| **1. Preprocess** | `src/data_preprocessing.py`       | `data/raw/*.txt`                  | `data/processed/*_processed.csv`    |
-| **2. Feature Eng.** | `src/feature_engineering.py`    | `data/processed/*_processed.csv`  | `data/processed/*_features.csv`     |
-| **3. Train**      | `src/model_training.py`           | `data/processed/*_features.csv`   | `models/final_lgb.joblib`           |
-| **4. Evaluate**   | `src/model_evaluation.py`         | model + test features             | MAE, RMSE & learning‑curve figures  |
-| **5. Dashboard**  | `dashboard/app.py`                | model + `test_features.csv`       | Interactive Streamlit UI            |
+| **Preprocess** | `src/data_preprocessing.py`       | `data/raw/*.txt`                  | `data/processed/*_processed.csv`    |
+| **Feature Eng.** | `src/feature_engineering.py`    | `data/processed/*_processed.csv`  | `data/processed/*_features.csv`     |
+| **Train**      | `src/model_training.py`           | `data/processed/*_features.csv`   | `models/final_lgb.joblib`           |
+| **Evaluate**   | `src/model_evaluation.py`         | model + test features             | MAE, RMSE & learning‑curve figures  |
+| **Dashboard**  | `dashboard/app.py`                | model + `test_features.csv`       | Interactive Streamlit UI            |
 
 ## Data Description: CMAPSS FD001
 
