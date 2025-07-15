@@ -8,4 +8,5 @@ exclude =
     docs/,
     .venv/,
     build/,
-    dist/
+    dist/,
+    dashboard/*
