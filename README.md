@@ -6,76 +6,25 @@
 
 ## Table of Contents
 
-1. [Project Description](#project-description)  
-2. [Detailed Steps](#detailed-steps)  
-3. [Data Description](#data-description)  
-4. [Installation](#installation)  
-5. [Development](#development)  
-6. [Simplified Pipeline](#simplified-data--model--dashboard-pipeline)  
+1. [Pipeline Overview](#pipeline-overview)  
+2. [Dataset: NASA CMAPSS FD001](#dataset-nasa-cmapss-fd001)  
+3. [Installation](#installation)  
+4. [Development](#development)   
+6. [Author](#author)  
 
 
-## Project Description
+## Pipeline Overview
 
-An end‑to‑end pipeline for Remaining Useful Life (RUL) prediction on turbofan engine data (NASA CMAPSS FD001), covering:
-
-| Stage                   | Script / Notebook                       | Inputs                                                                 | Outputs                                                           |
-|-------------------------|-----------------------------------------|------------------------------------------------------------------------|-------------------------------------------------------------------|
-| **Data Preprocessing**  | `src/data_preprocessing.py`<br>`01_EDA.ipynb`   | `data/raw/train_FD001.txt`<br>`data/raw/test_FD001.txt`<br>`data/raw/RUL_FD001.txt` | `data/processed/train_processed.csv`<br>`data/processed/test_processed.csv` |
-| **Feature Engineering** | `src/feature_engineering.py`<br>`02_Feature_Engineering.ipynb` | Processed CSVs (`*_processed.csv`)                                     | `data/processed/train_features.csv`<br>`data/processed/test_features.csv`      |
-| **Model Training**      | `src/model_training.py`<br>`03_Modeling.ipynb`       | Engine features (`*_features.csv`)                                     | `models/final_lgb.joblib`                                          |
-| **Model Evaluation**    | `src/model_evaluation.py`                | `y_true`, `y_pred` arrays                                               | MAE, RMSE, learning‑curve Figure                                   |
-| **Dashboard**           | `dashboard/app.py`, plus modules        | `data/processed/test_features.csv`<br>`models/final_lgb.joblib`         | Interactive Streamlit dashboard (Overview, Signals, Diagnostics, Explainability) |
+Below is a concise view of the end‑to‑end flow, from raw data ingestion to interactive dashboard.
 
 
-## Detailed Steps
-
-
-- **Data preprocessing** (`src/data_preprocessing.py`, inspired by `notebooks/01_EDA.ipynb`)
-  Load and clean the raw CMAPSS FD001 data, drop empty and non-informative columns, compute RUL for every cycle in the training set, select only the last cycle per engine with its true RUL for testing, and save processed CSVs.
-  - **Input** → `data/raw/train_FD001.txt`, `data/raw/test_FD001.txt`, `data/raw/RUL_FD001.txt`
-  - **Output** → `data/processed/train_processed.csv`, `data/processed/test_processed.csv`
-
-- **Feature engineering** (`src/feature_engineering.py`, inspired by `notebooks/02_Feature_Engineering.ipynb`)
-  - Rolling-window stats (mean, std over 5 cycles) to capture short-term trends and variability
-  - Delta features (difference from previous cycle) to encode cycle-to-cycle changes
-  - Cycle ratio (current cycle / max cycle) to normalize the engine’s life stage
-  - Drop zero-variance features (constant signals) and drop highly correlated sensors to reduce redundancy
-  - Standard scaling (zero mean, unit variance) for all features
-  - Save engineered datasets
-  - **Input** → `data/processed/train_processed.csv`, `data/processed/test_processed.csv`
-  - **Output** → `data/processed/train_features.csv`, `data/processed/test_features.csv`
-
-- **Model training** (`src/model_training.py`, inspired by `notebooks/03_Modeling.ipynb`)
-  Compare baselines (Linear Regression, Ridge, Lasso, Random Forest, LightGBM), tune Random Forest hyperparameters with `RandomizedSearchCV`, tune LightGBM with Optuna, train the final LightGBM model, and serialize it.
-  - **Input** → `data/processed/train_features.csv`, `data/processed/test_features.csv`
-  - **Output** → `models/final_lgb.joblib`
-
-- **Model evaluation** (`src/model_evaluation.py`)
-  - `compute_metrics(y_true, y_pred)` : returns MAE and RMSE
-  - `plot_learning_curve(estimator, X, y, groups, …)` : returns a `matplotlib.figure.Figure` showing train vs CV MAE as training set size grows
-
-- **Streamlit Dashboard** (`dashboard/app.py`)  
-  An interactive dashboard organized into four tabs:
-
-  - **Overview (Test Set)**  
-    - **Select Engine Unit** → dropdown selector  
-    - **Cycle at Measurement** & **Life Stage** (cycle_ratio)  
-    - **Predicted vs True RUL**  
-    - **Global MAE / RMSE** (test set)  
-  - **Raw Sensor & Settings** → display raw feature table for chosen engine  
-  - **Diagnostics** → error distribution, bias, RMSE, scatter True vs Predicted  
-  - **Explainability (SHAP)** → global & local SHAP plots
-
-  - **Input**  → Processed test features: `data/processed/test_features.csv` & Trained model artifact:   `models/final_lgb.joblib`
-  - **Output** → interactive metrics & charts  
-  
-- **CI/CD** (GitHub Actions)
-  - Install dependencies via `pip install -r requirements.txt`
-  - Run linters to enforce code quality and consistency:
-    - **Black** – opinionated code formatter that automatically reformats Python source to a canonical style.
-    - **isort** – sorts and groups `import` statements according to configurable rules, keeping them tidy.
-    - **Flake8** – static code analysis to catch bugs, style violations (PEP8), unused variables/imports, etc.
-  - Execute unit tests with `pytest` to ensure each component behaves as expected
+| Stage             | Script                            | Inputs                            | Outputs                             |
+|-------------------|-----------------------------------|-----------------------------------|-------------------------------------|
+| **1. Preprocess** | `src/data_preprocessing.py`       | `data/raw/*.txt`                  | `data/processed/*_processed.csv`    |
+| **2. Feature Eng.** | `src/feature_engineering.py`    | `data/processed/*_processed.csv`  | `data/processed/*_features.csv`     |
+| **3. Train**      | `src/model_training.py`           | `data/processed/*_features.csv`   | `models/final_lgb.joblib`           |
+| **4. Evaluate**   | `src/model_evaluation.py`         | model + test features             | MAE, RMSE & learning‑curve figures  |
+| **5. Dashboard**  | `dashboard/app.py`                | model + `test_features.csv`       | Interactive Streamlit UI            |
 
 ## Data Description: CMAPSS FD001
 
@@ -148,13 +97,10 @@ flake8 .
 pytest -q --disable-warnings --maxfail=1
 ```
 
+## Author
 
-## Simplified Pipeline
+**Cheikh LO**  
+*Data Scientist & Statistical Engineer*
 
-| Stage                   | Input                        | Script                          | Output                                   |
-|-------------------------|------------------------------|---------------------------------|------------------------------------------|
-| **1. Preprocessing**    | `data/raw/*.txt`             | `src/data_preprocessing.py`     | `data/processed/*_processed.csv`         |
-| **2. Feature Eng.**     | `*_processed.csv`            | `src/feature_engineering.py`    | `data/processed/*_features.csv`          |
-| **3. Training**         | `*_features.csv`             | `src/model_training.py`         | `models/final_lgb.joblib`                |
-| **4. Evaluation**       | Model + test features        | `src/model_evaluation.py`       | MAE, RMSE, learning-curve figures        |
-| **5. Dashboard**        | Model + test features        | `dashboard/app.py`              | Interactive Streamlit web UI             |
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Cheikh%20LO-blue?logo=linkedin&style=flat-square)](https://www.linkedin.com/in/cheikh-lo-531701193/)  
+[![GitHub](https://img.shields.io/badge/GitHub-cheikh133-black?logo=github&style=flat-square)](https://github.com/cheikh133)
