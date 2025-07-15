@@ -59,7 +59,7 @@ The FD001 subset of the NASA CMAPSS dataset contains run-to-failure trajectories
 |:-----------------------------|:-----------------------------------------------------------|
 | `unit_number`                | Engine identifier                                          |
 | `time_in_cycles`             | Cycle index                                                |
-| `operational_setting_1–3`    | Three engine operating parameters (e.g. temp, pressure)   |
+| `operational_setting_1–3`    | Three engine operating parameters |
 | `sensor_measurement_1–21`    | 21 multivariate sensor readings (temp, pressure, vibration, flow) |
 
 **File formats**
