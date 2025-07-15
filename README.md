@@ -4,6 +4,8 @@
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-blue?style=flat-square&logo=streamlit&logoColor=white&label=Live%20Demo&labelColor=555555&color=007ACC&cacheSeconds=3600)](https://predictive-maintenance-rul-wth7dklhnwcvyzgzoyp2ry.streamlit.app/)
 
+**Objective:** Build and deploy an end‑to‑end pipeline to predict Remaining Useful Life (RUL) of turbofan engines using NASA CMAPSS data, with automated preprocessing, feature engineering, model training, evaluation, and an interactive Streamlit dashboard.
+
 ## Table of Contents
 
 1. [Key Technologies](#key-technologies)
@@ -16,11 +18,16 @@
 ## Key Technologies
 
 - **Python 3.11**  
-- **LightGBM** (gradient boosting)  
-- **Optuna** (hyperparameter tuning)  
-- **Scikit‑learn** (preprocessing, metrics)  
-- **Streamlit** (dashboard)  
-- **GitHub Actions** (CI/CD)  
+- **Pandas & NumPy** — data manipulation and numerical computing  
+- **scikit‑learn** —  
+  - *Preprocessing*: `StandardScaler`, `GroupKFold`  
+  - *Linear models*: `LinearRegression`, `Ridge`, `Lasso`  
+  - *Metrics*: `mean_absolute_error`, `mean_squared_error`  
+- **LightGBM**, **XGBoost** — gradient boosting frameworks  
+- **Optuna** — hyperparameter optimization  
+- **Streamlit** — interactive dashboard  
+- **Altair** — declarative visualization  
+- **SHAP** — model explainability via Shapley values 
 
 
 ## Pipeline Overview
