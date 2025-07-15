@@ -33,8 +33,27 @@ This repository implements a complete pipeline for Remaining Useful Life (RUL) p
   - `compute_metrics(y_true, y_pred)` : returns MAE and RMSE
   - `plot_learning_curve(estimator, X, y, groups, …)` : returns a `matplotlib.figure.Figure` showing train vs CV MAE as training set size grows
 
-- **Streamlit Dashboard** (`dashboard/app.py`)
-  Interactive app to explore sensor signals, RUL predictions, and performance visualizations.
+- **Streamlit Dashboard** (`dashboard/app.py`)  
+  A four‑tab web interface for inspecting RUL predictions on the test set:
+
+  1. **Overview (Test Set)**  
+     - Select an engine unit  
+     - Show cycle at measurement and current life stage (cycle_ratio)  
+     - Show predicted vs. true RUL  
+     - Display overall MAE and RMSE  
+     - Inline help text for each metric  
+
+  2. **Raw Sensor & Settings**  
+     - View raw sensor readings and operational settings for the chosen engine  
+
+  3. **Diagnostics**  
+     - Histogram of prediction errors (Predicted − True)  
+     - Mean error (bias) and RMSE  
+     - Scatter plot of True vs. Predicted RUL  
+
+  4. **Explainability (SHAP)**  
+     - Bar chart of global feature importance (mean |SHAP|)  
+     - Waterfall plot for local explanation on a selected engine  
 
 - **CI/CD** (GitHub Actions)
   - Install dependencies via `pip install -r requirements.txt`
