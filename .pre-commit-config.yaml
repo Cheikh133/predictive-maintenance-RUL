@@ -4,19 +4,24 @@ repos:
     rev: v4.5.0
     hooks:
       - id: trailing-whitespace
-        # don’t strip lines in Markdown
-        exclude: \.md$
+        # Don’t strip trailing whitespace in markdown files or any files under dashboard/
+        exclude: ^(dashboard/|.*\.md$)
       - id: end-of-file-fixer
-        exclude: \.md$
+        # Don’t enforce final newline in markdown files or any files under dashboard/
+        exclude: ^(dashboard/|.*\.md$)
 
   - repo: https://github.com/psf/black
     rev: 23.3.0
     hooks:
       - id: black
         language_version: python3
+        # Skip formatting for dashboard/ and markdown files
+        exclude: ^(dashboard/|.*\.md$)
 
   - repo: https://github.com/PyCQA/isort
     rev: 5.12.0
     hooks:
       - id: isort
         language_version: python3
+        # Skip import sorting in dashboard/ and markdown files
+        exclude: ^(dashboard/|.*\.md$)
