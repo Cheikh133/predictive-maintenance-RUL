@@ -5,16 +5,30 @@
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-blue?style=flat-square&logo=streamlit&logoColor=white&label=Live%20Demo&labelColor=555555&color=007ACC&cacheSeconds=3600)](https://predictive-maintenance-rul-wth7dklhnwcvyzgzoyp2ry.streamlit.app/)
 
 ## Table of Contents
-1. [Project Description](#project-description)
-2. [Data Description](#data-description)
-3. [Installation](#installation)
-4. [Development](#development)
-5. [Project Structure](#project-structure)
-6. [Pipeline Overview](#simplified-data--model--dashboard-pipeline)
+
+1. [Project Description](#project-description)  
+2. [Detailed Steps](#detailed-steps)  
+3. [Data Description](#data-description)  
+4. [Installation](#installation)  
+5. [Development](#development)  
+6. [Simplified Pipeline](#simplified-data--model--dashboard-pipeline)  
+
 
 ## Project Description
 
-This repository implements a complete pipeline for Remaining Useful Life (RUL) prediction on turbofan engine data (NASA CMAPSS FD001). It includes:
+An end‑to‑end pipeline for Remaining Useful Life (RUL) prediction on turbofan engine data (NASA CMAPSS FD001), covering:
+
+| Stage                   | Script / Notebook                       | Inputs                                                                 | Outputs                                                           |
+|-------------------------|-----------------------------------------|------------------------------------------------------------------------|-------------------------------------------------------------------|
+| **Data Preprocessing**  | `src/data_preprocessing.py`<br>`01_EDA.ipynb`   | `data/raw/train_FD001.txt`<br>`data/raw/test_FD001.txt`<br>`data/raw/RUL_FD001.txt` | `data/processed/train_processed.csv`<br>`data/processed/test_processed.csv` |
+| **Feature Engineering** | `src/feature_engineering.py`<br>`02_Feature_Engineering.ipynb` | Processed CSVs (`*_processed.csv`)                                     | `data/processed/train_features.csv`<br>`data/processed/test_features.csv`      |
+| **Model Training**      | `src/model_training.py`<br>`03_Modeling.ipynb`       | Engine features (`*_features.csv`)                                     | `models/final_lgb.joblib`                                          |
+| **Model Evaluation**    | `src/model_evaluation.py`                | `y_true`, `y_pred` arrays                                               | MAE, RMSE, learning‑curve Figure                                   |
+| **Dashboard**           | `dashboard/app.py`, plus modules        | `data/processed/test_features.csv`<br>`models/final_lgb.joblib`         | Interactive Streamlit dashboard (Overview, Signals, Diagnostics, Explainability) |
+
+
+## Detailed Steps
+
 
 - **Data preprocessing** (`src/data_preprocessing.py`, inspired by `notebooks/01_EDA.ipynb`)
   Load and clean the raw CMAPSS FD001 data, drop empty and non-informative columns, compute RUL for every cycle in the training set, select only the last cycle per engine with its true RUL for testing, and save processed CSVs.
@@ -52,11 +66,8 @@ This repository implements a complete pipeline for Remaining Useful Life (RUL) p
   - **Diagnostics** → error distribution, bias, RMSE, scatter True vs Predicted  
   - **Explainability (SHAP)** → global & local SHAP plots
 
-  **Input**  →  
-  - Processed test features: `data/processed/test_features.csv`  
-  - Trained model artifact:   `models/final_lgb.joblib`  
-
-  **Output** → interactive metrics & charts  
+  - **Input**  → Processed test features: `data/processed/test_features.csv` & Trained model artifact:   `models/final_lgb.joblib`
+  - **Output** → interactive metrics & charts  
   
 - **CI/CD** (GitHub Actions)
   - Install dependencies via `pip install -r requirements.txt`
@@ -137,37 +148,13 @@ flake8 .
 pytest -q --disable-warnings --maxfail=1
 ```
 
-## Project Structure
 
-predictive-maintenance-RUL/  
-├── .github/                   # GitHub Actions workflows  
-├── data/  
-│   ├── raw/                   # Original TXT data files  
-│   └── processed/             # Cleaned & feature‐engineered CSVs  
-├── notebooks/                 # Exploratory & prototyping notebooks  
-├── src/                       # Production modules  
-│   ├── data_preprocessing.py  # Load & clean raw data, compute RUL  
-│   ├── feature_engineering.py # Generate rolling, delta, cycle_ratio, scale  
-│   ├── model_training.py      # Baselines, hyperparameter tuning, final model  
-│   ├── model_evaluation.py    # MAE/RMSE computation & learning‐curve plotting  
-│   └── model_utils.py         # Path helpers & model save/load  
-├── models/                    # Serialized model artifacts  
-├── dashboard/                 # Streamlit application for visualization  
-├── tests/                     # Pytest unit tests  
-├── requirements.txt           # Project dependencies  
-└── README.md                  # Project overview & instructions  
+## Simplified Pipeline
 
-## Simplified Data → Model → Dashboard Pipeline
-
-data/raw/*.txt  
-      ↓  # data_preprocessing.py  
-data/processed/train_processed.csv  
-data/processed/test_processed.csv  
-      ↓  # feature_engineering.py  
-data/processed/train_features.csv  
-data/processed/test_features.csv  
-      ↓  # model_training.py & model_evaluation.py  
-models/final_lgb.joblib  
-performance metrics (MAE, RMSE, learning curves)  
-      ↓  # dashboard/app.py  
-Streamlit dashboard  
+| Stage                   | Input                        | Script                          | Output                                   |
+|-------------------------|------------------------------|---------------------------------|------------------------------------------|
+| **1. Preprocessing**    | `data/raw/*.txt`             | `src/data_preprocessing.py`     | `data/processed/*_processed.csv`         |
+| **2. Feature Eng.**     | `*_processed.csv`            | `src/feature_engineering.py`    | `data/processed/*_features.csv`          |
+| **3. Training**         | `*_features.csv`             | `src/model_training.py`         | `models/final_lgb.joblib`                |
+| **4. Evaluation**       | Model + test features        | `src/model_evaluation.py`       | MAE, RMSE, learning-curve figures        |
+| **5. Dashboard**        | Model + test features        | `dashboard/app.py`              | Interactive Streamlit web UI             |
