@@ -4,6 +4,13 @@
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-blue?style=flat-square&logo=streamlit&logoColor=white&label=Live%20Demo&labelColor=555555&color=007ACC&cacheSeconds=3600)](https://predictive-maintenance-rul-wth7dklhnwcvyzgzoyp2ry.streamlit.app/)
 
+## Table of Contents
+1. [Project Description](#project-description)
+2. [Data Description](#data-description)
+3. [Installation](#installation)
+4. [Development](#development)
+5. [Project Structure](#project-structure)
+6. [Pipeline Overview](#simplified-data--model--dashboard-pipeline)
 
 ## Project Description
 
@@ -34,27 +41,23 @@ This repository implements a complete pipeline for Remaining Useful Life (RUL) p
   - `plot_learning_curve(estimator, X, y, groups, …)` : returns a `matplotlib.figure.Figure` showing train vs CV MAE as training set size grows
 
 - **Streamlit Dashboard** (`dashboard/app.py`)  
-  A four‑tab web interface for inspecting RUL predictions on the test set:
+  An interactive dashboard organized into four tabs:
 
-  1. **Overview (Test Set)**  
-     - Select an engine unit  
-     - Show cycle at measurement and current life stage (cycle_ratio)  
-     - Show predicted vs. true RUL  
-     - Display overall MAE and RMSE  
-     - Inline help text for each metric  
+  - **Overview (Test Set)**  
+    - **Select Engine Unit** → dropdown selector  
+    - **Cycle at Measurement** & **Life Stage** (cycle_ratio)  
+    - **Predicted vs True RUL**  
+    - **Global MAE / RMSE** (test set)  
+  - **Raw Sensor & Settings** → display raw feature table for chosen engine  
+  - **Diagnostics** → error distribution, bias, RMSE, scatter True vs Predicted  
+  - **Explainability (SHAP)** → global & local SHAP plots
 
-  2. **Raw Sensor & Settings**  
-     - View raw sensor readings and operational settings for the chosen engine  
+  **Input**  →  
+  - Processed test features: `data/processed/test_features.csv`  
+  - Trained model artifact:   `models/final_lgb.joblib`  
 
-  3. **Diagnostics**  
-     - Histogram of prediction errors (Predicted − True)  
-     - Mean error (bias) and RMSE  
-     - Scatter plot of True vs. Predicted RUL  
-
-  4. **Explainability (SHAP)**  
-     - Bar chart of global feature importance (mean |SHAP|)  
-     - Waterfall plot for local explanation on a selected engine  
-
+  **Output** → interactive metrics & charts  
+  
 - **CI/CD** (GitHub Actions)
   - Install dependencies via `pip install -r requirements.txt`
   - Run linters to enforce code quality and consistency:
