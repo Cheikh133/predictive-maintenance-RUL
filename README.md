@@ -4,6 +4,8 @@
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-blue?style=flat-square&logo=streamlit&logoColor=white&label=Live%20Demo&labelColor=555555&color=007ACC&cacheSeconds=3600)](https://predictive-maintenance-rul-wth7dklhnwcvyzgzoyp2ry.streamlit.app/)
 
+ *Note: The app may take up to 30 seconds to load if it was asleep (free hosting on Streamlit Cloud).*
+
 **Objective:** Build and deploy an end‑to‑end pipeline to predict Remaining Useful Life (RUL) of turbofan engines using NASA CMAPSS data, with automated preprocessing, feature engineering, model training, evaluation, and an interactive Streamlit dashboard.
 
 ## Table of Contents
