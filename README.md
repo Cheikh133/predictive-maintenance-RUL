@@ -91,7 +91,7 @@ To contribute, run linters, tests and pre-commit hooks locally:
 ```bash
 # 1. Activate your virtual environment
 source .venv/bin/activate    # macOS/Linux
-# .venv\Scripts\activate     # Windows PowerShell
+# .venv\Scripts\activate     # PowerShell
 
 # 2. Install development dependencies
 pip install --upgrade pip
